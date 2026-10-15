@@ -1,0 +1,28 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+#Jupyter
+.ipynb_checkpoints/
+
+#Credenciais
+.env
+.env.*
+!.env.example
+*.key
+
+#Dados e modelos
+*.joblib
+*.pkl
+*.parquet
+datasets/privados/
+data/raw/
+
+#Sistema operacional
+.DS_Store
+Thumbs.db
+
+#VS Code
+.vscode/
