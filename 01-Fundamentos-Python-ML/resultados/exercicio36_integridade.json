@@ -1,0 +1,11 @@
+﻿{
+    "projeto":  "AI Energy Auditor",
+    "exercicio":  36,
+    "etapa":  7,
+    "verificado_em_utc":  "2026-10-16T22:03:55.4631030Z",
+    "arquivo_dados":  "dados/consumo_energetico_v1.csv",
+    "algoritmo":  "SHA256",
+    "hash_atual":  "c24a08ea24623e98ac6b180e0ce9aa0b74e9807a3433882906f42e93884144de",
+    "hash_esperado":  "c24a08ea24623e98ac6b180e0ce9aa0b74e9807a3433882906f42e93884144de",
+    "integridade_validada":  true
+}

@@ -1,0 +1,58 @@
+{
+    "projeto": "AI Energy Auditor",
+    "semana": 1,
+    "data_checkpoint": "2026-10-16",
+    "status": "semana01_concluida",
+    "ambiente": {
+        "sistema_operacional": "Windows 11",
+        "python": "3.12.10",
+        "pytest": "9.1.1",
+        "ambiente_virtual": ".venv"
+    },
+    "experimento_energetico": {
+        "dataset": "dados/consumo_energetico_v1.csv",
+        "quantidade_registros": 30,
+        "seed": 2026,
+        "metodologia": "walk-forward com janela expansiva",
+        "quantidade_previsoes": 15,
+        "baseline": {
+            "mae_kwh": 33.6644,
+            "rmse_kwh": 38.3879
+        },
+        "regressao_linear": {
+            "mae_kwh": 9.8871,
+            "rmse_kwh": 10.7783
+        },
+        "reducao_mae_percentual": 70.63
+    },
+    "testes": {
+        "quantidade": 16,
+        "aprovados": 16,
+        "falhas": 0,
+        "erros": 0,
+        "ignorados": 0,
+        "relatorio": "resultados/exercicio35_testes.xml"
+    },
+    "documentacao": {
+        "arquivo": "README.md",
+        "secoes_identificadas": 10,
+        "estrutura_validada": true,
+        "revisao_integral_concluida": true,
+        "validada_em_utc": "2026-10-16T22:53:33.166901+00:00"
+    },
+    "observacoes": [
+        "Resultados obtidos com dados sinteticos.",
+        "Melhoria de previsao nao representa economia real de energia.",
+        "Integracao das validacoes ao fluxo de producao ainda pendente."
+    ],
+    "validacao_notebook": {
+        "arquivo": "notebooks\\semana01_dia01_numpy.ipynb",
+        "total_celulas": 116,
+        "celulas_codigo": 80,
+        "celulas_markdown": 36,
+        "execucao_integral_validada": true,
+        "testes_automatizados_aprovados": 16,
+        "erros_execucao": 0,
+        "validado_em_utc": "2026-10-16T22:45:33.325867+00:00"
+    }
+}

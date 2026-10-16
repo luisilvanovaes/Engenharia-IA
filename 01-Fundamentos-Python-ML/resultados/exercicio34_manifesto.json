@@ -1,0 +1,39 @@
+{
+    "projeto": "AI Energy Auditor",
+    "experimento": "Exercicio 33 - Auditoria Energetica",
+    "versao_dados": "v1",
+    "arquivo_dados": "dados/consumo_energetico_v1.csv",
+    "sha256_dados": "c24a08ea24623e98ac6b180e0ce9aa0b74e9807a3433882906f42e93884144de",
+    "geracao_dados": {
+        "random_seed": 2026,
+        "gerador": "numpy.random.default_rng",
+        "quantidade_registros": 30,
+        "data_inicial": "2026-09-01",
+        "horas_min": 6,
+        "horas_max": 12,
+        "consumo_fixo_kwh": 50,
+        "consumo_por_hora_kwh": 18,
+        "ruido_media": 0,
+        "ruido_desvio_padrao": 12
+    },
+    "modelo": {
+        "tipo": "regressao_linear",
+        "implementacao": "numpy.linalg.lstsq",
+        "intercepto": true,
+        "rcond": null
+    },
+    "validacao": {
+        "metodo": "walk_forward",
+        "janela": "expansiva",
+        "treinamento_inicial": 15,
+        "previsoes_avaliadas": 15,
+        "baseline": "media_historica"
+    },
+    "ambiente": {
+        "python": "3.12.10",
+        "numpy": "2.5.4",
+        "pandas": "3.0.6",
+        "scikit_learn": "1.9.1"
+    },
+    "ambiente_registrado_em_utc": "2026-10-16T22:42:42.192270+00:00"
+}

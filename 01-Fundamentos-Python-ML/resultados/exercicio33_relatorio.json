@@ -1,0 +1,30 @@
+{
+    "projeto": "AI Energy Auditor",
+    "experimento": "Exercicio 33 - Auditoria Energetica",
+    "tipo_dados": "sinteticos",
+    "metodologia": "Walk-Forward com janela expansiva",
+    "treinamento_inicial_dias": 15,
+    "previsoes_avaliadas": 15,
+    "variavel_explicativa": "horas_operacao",
+    "variavel_alvo": "consumo_kwh",
+    "baseline": {
+        "metodo": "media_historica",
+        "mae_kwh": 33.6644,
+        "rmse_kwh": 38.3879
+    },
+    "regressao_linear": {
+        "metodo": "minimos_quadrados",
+        "mae_kwh": 9.8871,
+        "rmse_kwh": 10.7783
+    },
+    "melhorias_percentuais": {
+        "mae": 70.63,
+        "rmse": 71.92
+    },
+    "observacoes": [
+        "Resultados obtidos com dados sinteticos.",
+        "As horas de operacao sao consideradas conhecidas no momento da previsao.",
+        "A reducao do erro de previsao nao representa economia efetiva de energia."
+    ],
+    "gerado_em_utc": "2026-10-16T22:42:42.071099+00:00"
+}
