@@ -1,0 +1,7 @@
+{
+    "modelo": "RegressaoLinearSimulada",
+    "melhor_epoca": 6,
+    "melhor_peso": 4.2,
+    "melhor_perda": 0.24,
+    "patience": 3
+}
