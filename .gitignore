@@ -36,3 +36,4 @@ venv/
 **/resultados/relatorio_testes_*.xml
 # Backups temporarios
 *.bak
+/01-Fundamentos-Python-ML/backups/auditoria_exercicio66_*/
