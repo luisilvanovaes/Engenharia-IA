@@ -1,0 +1,17 @@
+{
+    "projeto": "AI Energy Auditor",
+    "versao": 1,
+    "algoritmo_hash": "SHA-256",
+    "artefatos": [
+        {
+            "arquivo": "relatorio_modelos_energeticos_v1.csv",
+            "tamanho_bytes": 394,
+            "sha256": "e5cfaad0302a74a4e831878dd609bad21c23dc390125ec85991da8dfc1ef8576"
+        },
+        {
+            "arquivo": "metadados_experimento_energetico_v1.json",
+            "tamanho_bytes": 1719,
+            "sha256": "1f53d58c69c8daf74464752075feabb5664e543015ed6d3110eaea9fc325307c"
+        }
+    ]
+}

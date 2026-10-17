@@ -1,0 +1,17 @@
+{
+    "projeto": "AI Energy Auditor",
+    "tipo_documento": "resumo_executivo_qualidade",
+    "versao": "1.0",
+    "gerado_em_utc": "2026-10-17T20:49:48.475009+00:00",
+    "indicadores": {
+        "total_auditorias": 2,
+        "auditorias_aprovadas": 1,
+        "auditorias_reprovadas": 1,
+        "taxa_aprovacao_pct": 50.0,
+        "total_datasets": 2,
+        "datasets_com_reprovacoes": [
+            "consumo_energetico_teste_defeituoso"
+        ],
+        "situacao_geral": "HÁ AUDITORIAS REPROVADAS"
+    }
+}

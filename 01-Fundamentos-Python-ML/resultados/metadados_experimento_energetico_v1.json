@@ -1,0 +1,53 @@
+{
+    "projeto": "AI Energy Auditor",
+    "experimento": "comparacao_modelos_energeticos_v1",
+    "semana": 2,
+    "tipo_dados": "sinteticos",
+    "variavel_alvo": "consumo_kwh",
+    "variavel_explicativa": "horas_operacao",
+    "periodo_teste": {
+        "inicio": "2026-09-24",
+        "fim": "2026-09-30",
+        "registros": 7
+    },
+    "modelos": [
+        {
+            "nome": "Baseline histórica",
+            "estrategia": "media_dos_7_dias_anteriores",
+            "mae_kwh": 25.474100008361113,
+            "rmse_kwh": 33.34806979827143
+        },
+        {
+            "nome": "Regressão fixa",
+            "estrategia": "treinamento_unico",
+            "registros_treinamento": 16,
+            "mae_kwh": 7.670338415487862,
+            "rmse_kwh": 8.818829088985407
+        },
+        {
+            "nome": "Regressão Walk-Forward",
+            "estrategia": "janela_expansiva",
+            "registros_treinamento_inicial": 16,
+            "registros_treinamento_final": 22,
+            "mae_kwh": 7.445532581639632,
+            "rmse_kwh": 8.628201339047772
+        }
+    ],
+    "condicoes": {
+        "divisao_cronologica": true,
+        "horas_operacao_conhecidas_antecipadamente": "hipotese_do_experimento",
+        "dados_reais_industriais": false
+    },
+    "limitacoes": [
+        "Dataset sintetico",
+        "Apenas sete registros de teste",
+        "Resultados nao comprovam generalizacao industrial",
+        "Disponibilidade antecipada das horas de operacao deve ser verificada em producao"
+    ],
+    "ambiente": {
+        "python": "3.12.10",
+        "numpy": "2.5.4",
+        "pandas": "3.0.6",
+        "scikit_learn": "1.9.1"
+    }
+}

@@ -26,3 +26,13 @@ Thumbs.db
 
 #VS Code
 .vscode/
+# Python - arquivos temporarios
+*.py[cod]
+.coverage
+.coverage.*
+htmlcov/
+venv/
+# Relatorios temporarios de testes
+**/resultados/relatorio_testes_*.xml
+# Backups temporarios
+*.bak

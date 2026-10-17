@@ -1,0 +1,24 @@
+{
+    "projeto": "AI Energy Auditor",
+    "tipo_documento": "manifesto_integridade_qualidade",
+    "versao": "1.0",
+    "gerado_em_utc": "2026-10-17T20:55:32.939271+00:00",
+    "algoritmo": "SHA-256",
+    "artefatos": {
+        "historico_auditorias": {
+            "arquivo": "auditoria_qualidade_energetica_v1.jsonl",
+            "tamanho_bytes": 973,
+            "sha256": "d7def492d0694674767c66bf2d73f0ca23a2a701533e27abb7f24683a86668c9"
+        },
+        "relatorio_consolidado": {
+            "arquivo": "relatorio_consolidado_qualidade_v1.csv",
+            "tamanho_bytes": 180,
+            "sha256": "86a3d00b8fe70a1e9da3368da1164403c05f3f540817fba762c24c66974a511a"
+        },
+        "resumo_executivo": {
+            "arquivo": "resumo_executivo_qualidade_v1.json",
+            "tamanho_bytes": 532,
+            "sha256": "e16567248b3fbf8375d88fc35b9cd7c1bf005de6560e317fdaccc33ccfaf577f"
+        }
+    }
+}
