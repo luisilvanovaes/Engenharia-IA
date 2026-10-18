@@ -170,3 +170,115 @@ Os testes automatizados e a execução do notebook são evidências complementar
 **Documentação para o livro técnico:** os conceitos, implementações, testes, resultados, dificuldades e lições aprendidas da formação serão consolidados em capítulos de Engenharia de Inteligência Artificial. O notebook e os artefatos citados neste README são fontes técnicas desse registro.
 
 A revisão integral deste README constitui uma etapa documental; a marcação de conclusão no checkpoint deve ocorrer **somente após a versão revisada ser incorporada e conferida no projeto local**.
+
+---
+
+## 11. Semana 02 — Pandas, Machine Learning e API
+
+### 11.1. Evolução do projeto
+
+Na Semana 02, o AI Energy Auditor evoluiu do experimento inicial para um protótipo com processamento de dados, avaliação de modelos preditivos, identificação estatística de anomalias e disponibilização de funcionalidades por uma API REST.
+
+O notebook de referência é `notebooks/semana02_dia01_pandas.ipynb`.
+
+As atividades abordaram:
+
+- Manipulação e análise de dados com Pandas;
+- Verificações de qualidade e integridade dos dados;
+- Engenharia de atributos temporais;
+- Avaliação cronológica de modelos de regressão;
+- Comparação com baseline histórica;
+- Identificação estatística de observações anômalas;
+- Desenvolvimento de API com FastAPI;
+- Testes automatizados com Pytest;
+- Empacotamento e execução com Docker.
+
+### 11.2. Avaliação dos modelos energéticos
+
+Foram avaliados três métodos sobre sete registros de teste, correspondentes ao período de 24 a 30 de setembro de 2026.
+
+| Modelo | MAE (kWh) | RMSE (kWh) |
+|---|---:|---:|
+| Regressão Walk-Forward | 7,4455 | 8,6282 |
+| Regressão fixa | 7,6703 | 8,8188 |
+| Baseline histórica | 25,4741 | 33,3481 |
+
+A regressão Walk-Forward apresentou redução relativa de 70,77% no MAE e de 74,13% no RMSE em comparação à baseline histórica.
+
+Fonte: `resultados/relatorio_modelos_energeticos_v1.csv`.
+
+Esses percentuais representam melhoria de precisão preditiva, não redução comprovada do consumo de energia.
+
+### 11.3. API REST
+
+A API está implementada em `exercicios/api_energia.py` utilizando FastAPI.
+
+Endpoints validados:
+
+| Método | Endpoint | Finalidade |
+|---|---|---|
+| GET | `/health` | Verificação de funcionamento |
+| GET | `/dados/resumo` | Resumo do conjunto de dados |
+| GET | `/dados/integridade` | Verificação de integridade |
+| POST | `/previsao` | Previsão de consumo energético |
+| GET | `/anomalias` | Identificação de observações anômalas |
+| GET | `/docs` | Documentação interativa da API |
+| GET | `/openapi.json` | Especificação OpenAPI |
+
+Exemplo de entrada para `POST /previsao`:
+
+```json
+{"horas_operacao": 8}
+```
+
+A identificação de anomalias é um mecanismo de triagem estatística. Seus resultados não comprovam, isoladamente, desperdícios, irregularidades ou fraudes.
+
+### 11.4. Execução com Docker
+
+A imagem da aplicação pode ser construída na raiz deste módulo:
+
+```powershell
+docker build -t ai-energy-auditor:v1 -f Dockerfile .
+```
+
+Para iniciar um contêiner:
+
+```powershell
+docker run -d --name ai-energy-auditor-api -p 8000:8000 ai-energy-auditor:v1
+```
+
+Com o contêiner em execução, a documentação interativa fica disponível em:
+
+`http://localhost:8000/docs`
+
+O comando de inicialização pressupõe que não exista outro contêiner com o mesmo nome e que a porta 8000 esteja disponível.
+
+### 11.5. Testes automatizados
+
+A suíte de testes foi executada com:
+
+```powershell
+python -m pytest testes/ -q --junitxml=resultados/relatorio_testes_semana02.xml
+```
+
+Resultado validado:
+
+- 35 testes executados e aprovados;
+- Zero falhas;
+- Zero erros;
+- Zero testes ignorados;
+- Um aviso de depreciação relacionado às dependências de teste do FastAPI.
+
+O relatório atualizado está em `resultados/relatorio_testes_semana02.xml`.
+
+### 11.6. Limitações e decisões de engenharia
+
+- O conjunto de dados permanece sintético, com 30 registros.
+- A avaliação preditiva utiliza uma amostra de teste pequena.
+- A validação temporal procura preservar a ordem cronológica dos dados.
+- A baseline histórica fornece uma referência para interpretar o desempenho dos modelos.
+- As previsões e anomalias não constituem comprovação de economia energética ou fraude.
+- A API e o Docker demonstram capacidade de execução técnica, não prontidão para produção.
+- Permanecem pendentes a validação com dados reais, o monitoramento operacional e a avaliação em instalações industriais.
+
+O relatório técnico semanal deve consolidar as métricas, limitações, decisões de engenharia e evidências de validação antes do encerramento formal da Semana 02.
