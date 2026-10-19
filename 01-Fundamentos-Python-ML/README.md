@@ -420,3 +420,134 @@ As principais limitações identificadas são:
 **Próximas etapas:** comparar árvores de decisão e ensembles, estudar estabilidade e sobreajuste, implementar validação e ajuste de hiperparâmetros, avaliar modelos por métricas e custos e reservar o conjunto de teste para a avaliação final.
 
 O objetivo permanece desenvolver progressivamente um sistema de apoio à auditoria energética industrial, com rastreabilidade, reprodutibilidade e validação técnica.
+
+### 12.9. Exercício 65 — Árvores de decisão e ensembles
+
+**Objetivo:** comparar três classificadores para detecção retrospectiva de falhas industriais, analisando desempenho, custo financeiro simulado, importância das variáveis, sobreajuste e estabilidade.
+
+#### 12.9.1. Modelos implementados
+
+Arquivo: `simulacao_industrial/comparador_modelos.py`.
+
+Foram implementados três estimadores:
+
+1. **Regressão Logística:** padronização das variáveis e ponderação das classes.
+2. **Árvore de Decisão:** profundidade máxima de 4 e mínimo de 5 amostras por folha.
+3. **Random Forest:** 100 árvores, profundidade máxima de 6 e mínimo de 3 amostras por folha.
+
+Todos foram treinados com os mesmos dados e avaliados utilizando uma divisão temporal, sem embaralhamento.
+
+O conjunto de teste permaneceu reservado para avaliação futura.
+
+#### 12.9.2. Comparação dos resultados
+
+A validação utilizou 54 registros, incluindo quatro falhas operacionais.
+
+| Métrica | Regressão Logística | Árvore de Decisão | Random Forest |
+|---|---:|---:|---:|
+| Acurácia | 100% | 74,07% | 88,89% |
+| Precisão | 100% | 18,75% | 33,33% |
+| Recall | 100% | 75% | 50% |
+| Falsos positivos | 0 | 13 | 4 |
+| Falsos negativos | 0 | 1 | 2 |
+| Custo financeiro simulado | R$ 0 | R$ 3.950 | R$ 4.600 |
+
+A Regressão Logística apresentou o melhor desempenho nesta validação.
+
+Entretanto, os resultados não demonstram superioridade universal do modelo, pois os dados são sintéticos e existem apenas quatro falhas no conjunto de validação.
+
+A função de custo utilizada foi:
+
+**Custo total = R$ 150 × falsos positivos + R$ 2.000 × falsos negativos.**
+
+Esses valores representam hipóteses financeiras didáticas, não prejuízos ou economias reais.
+
+#### 12.9.3. Importância das variáveis
+
+A Random Forest apresentou as seguintes importâncias:
+
+| Variável | Importância |
+|---|---:|
+| `consumo_kwh` | 0,3863 |
+| `consumo_kwh_dia_anterior` | 0,1435 |
+| `producao_unidades` | 0,1228 |
+| `horas_operacao` | 0,1179 |
+| `media_consumo_7d` | 0,1072 |
+| `temperatura_ambiente_c` | 0,1008 |
+| `turnos_planejados` | 0,0216 |
+
+O consumo energético diário apresentou a maior importância.
+
+Esse resultado é compatível com o mecanismo de simulação, no qual as falhas aumentam artificialmente o consumo.
+
+As importâncias são calculadas a partir da redução de impureza das árvores. Não demonstram causalidade e podem ser influenciadas pela correlação entre variáveis.
+
+#### 12.9.4. Análise de possível sobreajuste
+
+Foram comparados os valores de recall nos conjuntos de treinamento e validação.
+
+| Modelo | Recall no treinamento | Recall na validação |
+|---|---:|---:|
+| Regressão Logística | 100% | 100% |
+| Árvore de Decisão | 91,67% | 75% |
+| Random Forest | 100% | 50% |
+
+A Random Forest apresentou a maior diferença entre treinamento e validação, sugerindo possível dificuldade de generalização.
+
+Essa diferença, isoladamente, não comprova sobreajuste, especialmente diante do pequeno número de falhas na validação.
+
+#### 12.9.5. Análise de estabilidade
+
+A Random Forest foi treinada novamente com cinco sementes aleatórias, mantendo os dados e os demais hiperparâmetros constantes.
+
+| Semente | Recall | Custo financeiro simulado |
+|---|---:|---:|
+| 10 | 75% | R$ 2.600 |
+| 21 | 75% | R$ 2.750 |
+| 42 | 50% | R$ 4.600 |
+| 84 | 75% | R$ 2.600 |
+| 123 | 50% | R$ 4.750 |
+
+O custo médio foi de **R$ 3.460**, com amplitude de **R$ 2.150**.
+
+A variação dos resultados indica sensibilidade à semente aleatória nesta configuração experimental.
+
+Não é possível generalizar essa conclusão para outros conjuntos de dados sem avaliações adicionais.
+
+#### 12.9.6. Testes automatizados e integração contínua
+
+Foi criado o arquivo `testes/test_comparador_modelos.py`, contendo quatro testes:
+
+1. Treinamento dos três estimadores.
+2. Rejeição de conjuntos vazios.
+3. Rejeição de conjuntos com tamanhos incompatíveis.
+4. Rejeição de treinamento contendo apenas uma classe.
+
+A suíte completa apresentou:
+
+- **60 testes aprovados**;
+- Zero falhas;
+- Um aviso de depreciação relacionado à integração Starlette/HTTPX.
+
+O commit `e0b911c` foi enviado à branch `main`.
+
+O workflow **Testes Python #13**, no GitHub Actions, foi concluído com sucesso.
+
+#### 12.9.7. Limitações e decisões de engenharia
+
+As principais limitações identificadas são:
+
+1. Os dados utilizados são integralmente simulados.
+2. Existem apenas quatro falhas na validação.
+3. O mecanismo de geração das falhas pode favorecer artificialmente determinados modelos.
+4. O uso do consumo observado no próprio dia caracteriza detecção retrospectiva, não previsão antecipada de falhas.
+5. A importância das variáveis não deve ser interpretada como causalidade.
+6. Os custos financeiros são hipotéticos.
+7. A estabilidade foi investigada apenas para a Random Forest, com cinco sementes e uma única divisão temporal.
+8. O conjunto de teste ainda não foi utilizado.
+
+**Decisão provisória:** manter a Regressão Logística como referência de comparação, sem declarar um modelo definitivo para implantação industrial.
+
+**Próxima etapa — Dia 14:** estudar validação temporal, vazamento de dados e ajuste de hiperparâmetros com `RandomizedSearchCV`, preservando a separação entre treinamento, validação e teste.
+
+O objetivo continua sendo desenvolver o AI Energy Auditor com critérios técnicos de reprodutibilidade, rastreabilidade e avaliação de custos operacionais.
