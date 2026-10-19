@@ -551,3 +551,108 @@ As principais limitações identificadas são:
 **Próxima etapa — Dia 14:** estudar validação temporal, vazamento de dados e ajuste de hiperparâmetros com `RandomizedSearchCV`, preservando a separação entre treinamento, validação e teste.
 
 O objetivo continua sendo desenvolver o AI Energy Auditor com critérios técnicos de reprodutibilidade, rastreabilidade e avaliação de custos operacionais.
+
+
+### 12.10. Exercício 66 — Validação e ajuste de hiperparâmetros
+
+**Objetivo:** implementar uma estratégia de otimização de hiperparâmetros para a detecção de falhas industriais, utilizando validação cruzada temporal e evitando vazamento de informações entre treinamento, validação e teste.
+
+#### Implementação
+
+Foi criado o módulo `simulacao_industrial/ajuste_hiperparametros.py`, contendo a função `ajustar_random_forest()`.
+
+A implementação utiliza:
+
+- `RandomizedSearchCV` para experimentar combinações de hiperparâmetros;
+- `TimeSeriesSplit(n_splits=3)` para preservar a ordem cronológica;
+- `RandomForestClassifier` com `class_weight="balanced"`;
+- `scoring="recall"` para priorizar a identificação de falhas;
+- `random_state=42` para reprodutibilidade;
+- `refit=True` para treinar o melhor estimador com todos os dados de treinamento.
+
+Foram avaliadas 10 combinações de hiperparâmetros. Os conjuntos externos de validação e teste não participaram da busca.
+
+#### Divisões temporais internas
+
+| Divisão | Registros de treino | Falhas no treino | Registros de validação | Falhas na validação |
+|---|---:|---:|---:|---:|
+| 1 | 64 | 6 | 62 | 7 |
+| 2 | 126 | 13 | 62 | 5 |
+| 3 | 188 | 18 | 62 | 6 |
+
+Todas as divisões apresentaram exemplos das duas classes.
+
+#### Melhores hiperparâmetros encontrados
+
+| Hiperparâmetro | Valor |
+|---|---|
+| `n_estimators` | 50 |
+| `max_depth` | 3 |
+| `min_samples_split` | 2 |
+| `min_samples_leaf` | 5 |
+| `max_features` | `log2` |
+
+**Recall médio na validação cruzada:** 57,30%.
+
+Esse resultado não deve ser confundido com o desempenho no conjunto externo de validação.
+
+#### Comparação dos classificadores
+
+Os quatro modelos foram avaliados nos mesmos 54 registros do conjunto externo de validação, contendo quatro falhas.
+
+| Modelo | Acurácia | Precisão | Recall | FP | FN | Custo simulado |
+|---|---:|---:|---:|---:|---:|---:|
+| Regressão Logística | 100,00% | 100,00% | 100,00% | 0 | 0 | R$ 0 |
+| Árvore de Decisão | 74,07% | 18,75% | 75,00% | 13 | 1 | R$ 3.950 |
+| Random Forest original | 88,89% | 33,33% | 50,00% | 4 | 2 | R$ 4.600 |
+| Random Forest otimizada | 74,07% | 18,75% | 75,00% | 13 | 1 | R$ 3.950 |
+
+A função de custo financeiro utilizada foi:
+
+`Custo = (150 × falsos_positivos) + (2000 × falsos_negativos)`
+
+Os valores representam hipóteses financeiras simuladas, não custos efetivamente observados em uma indústria.
+
+A otimização reduziu o custo da Random Forest de R$ 4.600 para R$ 3.950, uma redução aproximada de 14,13%. Entretanto, aumentou os falsos positivos de 4 para 13.
+
+#### Decisão de engenharia
+
+A Regressão Logística permanece como principal candidata para a etapa seguinte, pois apresentou o menor custo financeiro simulado no conjunto externo de validação.
+
+A Random Forest otimizada não superou a Árvore de Decisão nesse conjunto. Portanto, o ajuste de hiperparâmetros não demonstrou superioridade geral em relação aos demais classificadores.
+
+A escolha é provisória e não representa aprovação para utilização industrial.
+
+#### Testes automatizados
+
+Foi criado o arquivo `testes/test_ajuste_hiperparametros.py`, com quatro testes:
+
+1. Ajuste em um cenário válido;
+2. Rejeição de conjunto vazio;
+3. Rejeição de entradas com tamanhos incompatíveis;
+4. Rejeição de número inválido de iterações.
+
+**Resultado local:** 64 testes aprovados, 1 aviso de depreciação preexistente.
+
+**Integração contínua:** GitHub Actions — Testes Python #15 aprovado.
+
+**Commit da implementação:** `51e332d`.
+
+#### Limitações e riscos
+
+- Os dados industriais são inteiramente simulados.
+- O conjunto externo de validação contém somente quatro falhas.
+- O desempenho perfeito da Regressão Logística não garante generalização.
+- A otimização por recall não considera diretamente o custo dos falsos positivos.
+- A escolha dos hiperparâmetros foi feita com validação cruzada temporal, mas a estabilidade dos resultados ainda precisa ser investigada.
+- A detecção atual utiliza informações observadas do próprio dia; não representa previsão antecipada de falhas.
+- O conjunto de teste permanece reservado para avaliação final.
+- Os custos financeiros são hipóteses que precisarão ser revisadas com dados reais.
+
+#### Próximas melhorias
+
+- Avaliar a estabilidade dos classificadores em diferentes períodos e cenários.
+- Investigar métricas e limiares de decisão alinhados ao custo financeiro.
+- Preparar a entrega do comparador de modelos no Exercício 67, correspondente ao Dia 15.
+- Elaborar o relatório técnico da Semana 03 com métricas, limitações e decisões de engenharia.
+
