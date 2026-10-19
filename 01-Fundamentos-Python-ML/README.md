@@ -656,3 +656,150 @@ Foi criado o arquivo `testes/test_ajuste_hiperparametros.py`, com quatro testes:
 - Preparar a entrega do comparador de modelos no Exercício 67, correspondente ao Dia 15.
 - Elaborar o relatório técnico da Semana 03 com métricas, limitações e decisões de engenharia.
 
+
+### 12.11. Exercício 67 — Entrega de Machine Learning
+
+**Semana 03 — Dia 15: Entrega ML**
+
+#### Objetivo
+
+Consolidar os conhecimentos de Machine Learning supervisionado avançado por meio da publicação de um comparador executável de classificadores de falhas industriais.
+
+A entrega contempla:
+
+- Comparação de quatro classificadores;
+- Avaliação de métricas de classificação;
+- Cálculo de custos financeiros simulados;
+- Seleção provisória do modelo;
+- Testes automatizados;
+- Relatório técnico;
+- Model card;
+- Integração contínua com GitHub Actions.
+
+#### Implementação
+
+Foi criado o módulo:
+
+`simulacao_industrial/relatorio_comparador.py`
+
+A função principal é:
+
+`gerar_relatorio_comparativo(dias=365, semente=42, n_iter=10)`
+
+O comparador executa as seguintes operações:
+
+1. Gera dados industriais sintéticos;
+2. Prepara as variáveis de entrada e a variável-alvo;
+3. Divide os dados cronologicamente em treinamento, validação e teste;
+4. Treina Regressão Logística, Árvore de Decisão e Random Forest;
+5. Executa a otimização da Random Forest com RandomizedSearchCV;
+6. Avalia os quatro classificadores no conjunto de validação;
+7. Organiza os resultados por custo financeiro crescente.
+
+O conjunto de teste permanece reservado.
+
+#### Execução do comparador
+
+A partir do diretório principal do projeto:
+
+```powershell
+python -c "from simulacao_industrial.relatorio_comparador import gerar_relatorio_comparativo; relatorio = gerar_relatorio_comparativo(); print(relatorio.to_string(index=False))"
+```
+
+#### Resultados experimentais
+
+A avaliação utilizou 54 registros de validação, incluindo quatro falhas operacionais simuladas.
+
+| Modelo | Acurácia | Precisão | Recall | FP | FN | Custo simulado |
+|---|---:|---:|---:|---:|---:|---:|
+| Regressão Logística | 100,00% | 100,00% | 100% | 0 | 0 | R$ 0 |
+| Árvore de Decisão | 74,07% | 18,75% | 75% | 13 | 1 | R$ 3.950 |
+| Random Forest otimizada | 74,07% | 18,75% | 75% | 13 | 1 | R$ 3.950 |
+| Random Forest | 88,89% | 33,33% | 50% | 4 | 2 | R$ 4.600 |
+
+A função de custo considera:
+
+- Falso positivo: R$ 150;
+- Falso negativo: R$ 2.000.
+
+Esses valores são hipóteses financeiras simuladas e não representam custos reais de uma empresa.
+
+#### Decisão de engenharia
+
+A **Regressão Logística** foi selecionada provisoriamente como principal candidata.
+
+Justificativas:
+
+1. Menor custo financeiro simulado na validação;
+2. Nenhum falso positivo ou falso negativo na execução registrada;
+3. Arquitetura relativamente simples;
+4. Possibilidade de interpretação dos coeficientes;
+5. Menor complexidade operacional em comparação com ensembles.
+
+Essa decisão não significa que o modelo esteja pronto para utilização industrial.
+
+#### Limitações
+
+- Dados inteiramente sintéticos;
+- Apenas quatro falhas no conjunto de validação;
+- Desempenho perfeito sem garantia de generalização;
+- Custos financeiros ainda não validados com empresas;
+- Classificação retrospectiva, sem previsão antecipada de falhas;
+- Conjunto de teste ainda reservado;
+- Necessidade de avaliar robustez, calibração e estabilidade.
+
+#### Testes automatizados
+
+Foi criado o arquivo:
+
+`testes/test_relatorio_comparador.py`
+
+Os três testes verificam:
+
+1. Geração correta do relatório e presença dos quatro modelos;
+2. Ordenação dos resultados pelo custo financeiro;
+3. Rejeição de número inválido de iterações.
+
+**Resultado da suíte completa:** 67 testes aprovados, sem falhas.
+
+Permanece um aviso de depreciação relacionado às dependências de teste do FastAPI/Starlette.
+
+#### Publicação e integração contínua
+
+**Commit da implementação:** `662f363`.
+
+**GitHub Actions:** workflow `Testes Python #17` aprovado.
+
+#### Relatório técnico e model card
+
+Foi elaborado o documento:
+
+`relatorios/semana03_relatorio_modelos.md`
+
+O relatório contém:
+
+- Resumo executivo;
+- Formulação do problema;
+- Características dos dados;
+- Estratégia de validação temporal;
+- Modelos e hiperparâmetros;
+- Resultados comparativos;
+- Função de custo financeiro;
+- Importância das variáveis;
+- Estabilidade e generalização;
+- Calibração;
+- Decisão de engenharia;
+- Model card;
+- Testes e integração contínua;
+- Limitações;
+- Próximas melhorias;
+- Conclusão.
+
+#### Checkpoint da Semana 03
+
+A entrega contempla um comparador executável, testes automatizados, documentação técnica e integração contínua.
+
+A Semana 03 consolida a comparação de modelos supervisionados, destacando a importância de avaliar não apenas a acurácia, mas também os custos dos erros, a estabilidade e as limitações dos dados.
+
+**Status:** implementação validada; documentação em preparação para publicação no repositório.
+
