@@ -106,6 +106,25 @@ def gerar_dados_industriais(
         2
     )
 
+    # Simulação de falhas operacionais com consumo adicional
+    probabilidade_falha = 0.08
+
+    df["falha_operacional"] = (
+        rng.random(dias) < probabilidade_falha
+    ).astype(int)
+
+    consumo_extra_falha = rng.uniform(
+        low=80.0,
+        high=180.0,
+        size=dias
+    )
+
+    df["consumo_kwh"] = np.round(
+        df["consumo_kwh"]
+        + df["falha_operacional"] * consumo_extra_falha,
+        2
+    )
+
     # Consumo conhecido até o dia anterior
     df["consumo_kwh_dia_anterior"] = (
         df["consumo_kwh"].shift(1)

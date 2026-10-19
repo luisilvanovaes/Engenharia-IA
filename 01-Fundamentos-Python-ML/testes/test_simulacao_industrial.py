@@ -68,7 +68,26 @@ def test_media_movel_sem_vazamento(dados):
         equal_nan=True,
     )
 
-
 def test_dias_invalidos():
     with pytest.raises(ValueError):
         gerar_dados_industriais(dias=0)
+
+def test_classificacao_falhas_binaria(dados):
+    """O rótulo de falha deve ser binário."""
+    assert dados["falha_operacional"].isin([0, 1]).all()
+
+
+def test_classificacao_falhas_duas_classes(dados):
+    """A base padrão deve conter dias normais e com falhas."""
+    classes = set(dados["falha_operacional"].unique())
+
+    assert classes == {0, 1}
+
+
+def test_simulacao_falhas_um_dia():
+    """A simulação deve funcionar mesmo com um único registro."""
+    dados = gerar_dados_industriais(dias=1)
+
+    assert len(dados) == 1
+    assert dados["falha_operacional"].iloc[0] in (0, 1)
+    assert dados["consumo_kwh"].iloc[0] >= 0
