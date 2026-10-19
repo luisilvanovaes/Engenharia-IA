@@ -282,3 +282,141 @@ O relatório atualizado está em `resultados/relatorio_testes_semana02.xml`.
 - Permanecem pendentes a validação com dados reais, o monitoramento operacional e a avaliação em instalações industriais.
 
 O relatório técnico semanal deve consolidar as métricas, limitações, decisões de engenharia e evidências de validação antes do encerramento formal da Semana 02.
+
+
+## 12. Semana 03 — Machine Learning supervisionado avançado
+
+### 12.1. Formulação do problema — Exercício 61
+
+O AI Energy Auditor passou a contemplar dois problemas distintos:
+
+- **Previsão energética:** estimar o consumo futuro de energia, em kWh, utilizando informações disponíveis antes do período previsto.
+- **Detecção de falhas operacionais:** classificar retrospectivamente períodos de operação como normais ou com falha, utilizando medições já observadas.
+
+Esses problemas não devem ser confundidos. O classificador implementado nesta etapa não prevê falhas antes de sua ocorrência.
+
+### 12.2. Simulação industrial — Exercícios 62 e 63
+
+Foi implementado um gerador de dados industriais sintéticos em `simulacao_industrial/gerador_dados.py`.
+
+O simulador produz 365 registros diários, com semente aleatória fixa, incluindo:
+
+- Turnos planejados;
+- Horas de operação;
+- Produção industrial;
+- Temperatura ambiente;
+- Consumo energético em kWh;
+- Indicador binário de falha operacional;
+- Consumo do dia anterior;
+- Média histórica de consumo dos sete dias anteriores.
+
+As falhas simuladas acrescentam consumo energético ao processo industrial.
+
+Na execução utilizada para o exercício, foram geradas 33 falhas em 365 dias. Após a remoção dos registros sem histórico completo, permaneceram 358 observações, das quais 32 continham falhas.
+
+### 12.3. Modelo de Regressão Logística — Exercício 64
+
+Arquivo: `simulacao_industrial/classificador_falhas.py`.
+
+O classificador foi implementado com Scikit-learn, utilizando:
+
+- `StandardScaler` para padronização;
+- `LogisticRegression` para classificação binária;
+- `class_weight="balanced"` para tratamento inicial do desbalanceamento;
+- `max_iter=1000`;
+- `random_state=42`.
+
+A padronização é ajustada exclusivamente com os dados de treinamento, por meio de um pipeline.
+
+Os dados são divididos cronologicamente, sem embaralhamento:
+
+| Conjunto | Registros | Falhas |
+|---|---:|---:|
+| Treinamento | 250 | 24 |
+| Validação | 54 | 4 |
+| Teste | 54 | 4 |
+| **Total** | **358** | **32** |
+
+O conjunto de teste permanece reservado para avaliação posterior.
+
+### 12.4. Resultados da validação
+
+Com limiar de classificação de 0,50, foram obtidos os seguintes resultados:
+
+| Indicador | Resultado |
+|---|---:|
+| Acurácia | 100% |
+| Precisão | 100% |
+| Recall | 100% |
+| Verdadeiros negativos | 50 |
+| Verdadeiros positivos | 4 |
+| Falsos positivos | 0 |
+| Falsos negativos | 0 |
+| Brier Score | 0,015902 |
+| Log Loss | 0,121535 |
+
+As probabilidades médias estimadas foram de 81,62% nos dias com falha e 10,66% nos dias normais.
+
+Esses resultados são específicos do conjunto sintético de validação e não demonstram desempenho equivalente em instalações industriais reais.
+
+### 12.5. Custos financeiros simulados
+
+Arquivo: `simulacao_industrial/custos_falhas.py`.
+
+Foi definida uma função de custo para erros de classificação:
+
+**Custo total = R$ 150 × falsos positivos + R$ 2.000 × falsos negativos.**
+
+Os valores são hipóteses financeiras utilizadas para fins didáticos e de comparação entre modelos.
+
+Na validação realizada, o custo calculado dos erros foi de **R$ 0,00**, pois não ocorreram falsos positivos nem falsos negativos.
+
+Esse resultado não representa economia energética comprovada, ausência de custos operacionais ou retorno financeiro real.
+
+### 12.6. Interpretação dos coeficientes
+
+Os coeficientes do modelo, após padronização das variáveis, foram:
+
+| Variável | Coeficiente |
+|---|---:|
+| `consumo_kwh` | +6,3380 |
+| `producao_unidades` | -2,3302 |
+| `horas_operacao` | -2,1191 |
+| `turnos_planejados` | -1,5973 |
+| `temperatura_ambiente_c` | -0,8812 |
+| `consumo_kwh_dia_anterior` | -0,2157 |
+| `media_consumo_7d` | +0,1065 |
+
+O consumo energético apresentou o maior coeficiente positivo.
+
+Esse comportamento é compatível com o mecanismo do simulador, no qual falhas aumentam o consumo. Os coeficientes não devem ser interpretados como evidência de causalidade.
+
+### 12.7. Testes e integração contínua
+
+Foi criado o arquivo `testes/test_classificador_falhas.py`, com testes de treinamento, avaliação e rejeição de limiar inválido.
+
+A suíte completa apresentou:
+
+- **56 testes aprovados**;
+- Zero falhas;
+- Um aviso de depreciação relacionado à integração de testes do FastAPI.
+
+O commit `4ce2122` foi enviado à branch `main`.
+
+O workflow **Testes Python #11**, no GitHub Actions, foi concluído com sucesso.
+
+### 12.8. Limitações e próximas melhorias
+
+As principais limitações identificadas são:
+
+1. Os dados são integralmente simulados.
+2. Existem apenas quatro falhas no conjunto de validação, tornando as métricas pouco robustas.
+3. O mecanismo de geração das falhas pode facilitar artificialmente sua identificação.
+4. O classificador utiliza o consumo observado no próprio dia e, portanto, realiza detecção retrospectiva, não previsão antecipada.
+5. A calibração das probabilidades ainda exige avaliação mais abrangente.
+6. Os custos financeiros são hipotéticos e precisam ser validados com dados operacionais reais.
+7. Ainda não foram realizados testes industriais de campo.
+
+**Próximas etapas:** comparar árvores de decisão e ensembles, estudar estabilidade e sobreajuste, implementar validação e ajuste de hiperparâmetros, avaliar modelos por métricas e custos e reservar o conjunto de teste para a avaliação final.
+
+O objetivo permanece desenvolver progressivamente um sistema de apoio à auditoria energética industrial, com rastreabilidade, reprodutibilidade e validação técnica.
