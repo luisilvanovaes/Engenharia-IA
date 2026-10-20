@@ -803,3 +803,109 @@ A Semana 03 consolida a comparação de modelos supervisionados, destacando a im
 
 **Status:** implementação validada; documentação em preparação para publicação no repositório.
 
+
+## Semana 04 — ML não supervisionado e robustez
+
+### 13.1. Exercício 68 — Clustering de perfis de consumo industrial
+
+**Dia 16 — KMeans, DBSCAN, escalas e interpretabilidade**
+
+#### Objetivo
+
+Segmentar registros industriais de acordo com suas características operacionais e energéticas, utilizando algoritmos de aprendizado não supervisionado.
+
+#### Implementação
+
+Foi criado o módulo `simulacao_industrial/clustering_industrial.py`, contendo:
+
+- `preparar_dados_clustering()`: validação e padronização das variáveis;
+- `executar_kmeans()`: agrupamento utilizando KMeans;
+- `executar_dbscan()`: agrupamento baseado em densidade.
+
+Foram utilizados 365 registros industriais sintéticos, gerados de forma reprodutível.
+
+As variáveis de agrupamento são:
+
+- Horas de operação;
+- Produção em unidades;
+- Temperatura ambiente;
+- Consumo de energia em kWh.
+
+A variável `falha_operacional` não participa do treinamento dos algoritmos.
+
+#### Resultados do KMeans
+
+Foram avaliadas configurações de 2 a 6 clusters.
+
+| Clusters | Silhouette |
+|---|---:|
+| 2 | 0,4914 |
+| 3 | 0,5108 |
+| 4 | 0,5101 |
+| 5 | 0,5360 |
+| 6 | 0,5474 |
+
+A configuração com três clusters apresentou perfis operacionais interpretáveis:
+
+| Perfil | Registros | Horas médias | Produção média | Consumo médio |
+|---|---:|---:|---:|---:|
+| Baixa atividade | 154 | 7,53 | 339,93 | 412,67 kWh |
+| Média atividade | 140 | 15,48 | 690,40 | 678,14 kWh |
+| Alta atividade | 71 | 23,55 | 1.068,13 | 955,78 kWh |
+
+A configuração com seis clusters apresentou o maior silhouette entre as alternativas testadas e diferenciou faixas de temperatura dentro dos três níveis de atividade.
+
+**Decisão de engenharia:** preservar ambas as configurações como referências exploratórias. Três clusters oferecem maior simplicidade gerencial; seis clusters permitem uma análise operacional mais detalhada.
+
+#### Resultados do DBSCAN
+
+Parâmetros exploratórios:
+
+- `eps=0.7`;
+- `min_samples=5`;
+- Variáveis padronizadas com `StandardScaler`.
+
+Distribuição encontrada:
+
+| Classificação | Registros |
+|---|---:|
+| Cluster 0 | 139 |
+| Cluster 1 | 71 |
+| Cluster 2 | 154 |
+| Ruído (-1) | 1 |
+
+O registro classificado como ruído corresponde a 25/07/2025 e coincide com uma falha operacional simulada.
+
+Entretanto, existem 33 falhas no conjunto completo. O DBSCAN identificou apenas uma delas como ruído, correspondendo a aproximadamente 3,03% de sensibilidade nessa configuração.
+
+**Importante:** ruído estatístico não equivale automaticamente a falha, desperdício ou fraude.
+
+#### Testes automatizados
+
+Foi criado o arquivo `testes/test_clustering_industrial.py`, com quatro testes:
+
+1. Agrupamento de 365 registros em três clusters pelo KMeans;
+2. Rejeição de quantidade inválida de clusters;
+3. Identificação de clusters e ruído pelo DBSCAN;
+4. Rejeição de parâmetro `eps` inválido.
+
+**Resultado da suíte completa:** 71 testes aprovados, nenhuma falha e um aviso de depreciação já conhecido do Starlette.
+
+#### Limitações
+
+- Os dados utilizados são inteiramente sintéticos;
+- A análise de silhouette é exploratória e realizada sobre os próprios registros agrupados;
+- As configurações de KMeans e DBSCAN ainda não foram validadas em dados industriais reais;
+- Diferenças de consumo entre grupos não demonstram causalidade;
+- Consumo elevado não significa necessariamente desperdício;
+- A configuração atual do DBSCAN apresenta baixa sensibilidade para falhas simuladas;
+- Os algoritmos não devem ser utilizados isoladamente para decisões operacionais automatizadas.
+
+#### Próximas melhorias
+
+- Investigar indicadores de eficiência energética, como kWh por unidade produzida;
+- Avaliar estabilidade dos agrupamentos em diferentes períodos;
+- Comparar resultados com dados industriais reais;
+- Avançar para métodos específicos de detecção de anomalias no Dia 17.
+
+**Status:** implementação concluída e testes locais aprovados; documentação e publicação no repositório ainda pendentes de validação.
